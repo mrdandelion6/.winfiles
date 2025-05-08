@@ -1,4 +1,4 @@
-# VERSION: 1.0.2
+# VERSION: 1.1.0
 # Copyright (c) 2024 Faisal Shaik
 # All rights reserved.
 #
@@ -73,19 +73,6 @@ function ccat {
 
     Get-Content -Path $file
 
-}
-function grep {
-    param (
-        [Parameter(Mandatory=$true)]
-        [string]$i,
-
-        [Parameter(Mandatory=$false)]
-        [string]$path = "."
-    )
-
-    Get-ChildItem -Path $path -Recurse -Include *$i* | ForEach-Object {
-        $_.FullName
-    }
 }
 
 function touch {
@@ -189,6 +176,8 @@ function sizeof() {
     $sizeInGB = [math]::Round($file.Length / 1GB, 2)
     echo "$($file.Name) size: $sizeInGB GB"
 }
+
+Set-Alias np notepad.exe
 
 # ========================== general ==========================
 # =============================================================
@@ -429,11 +418,9 @@ function ubu804 () {
 # // ========================================================//
 # //===================== CONFIGURATION =====================//
 
-hp
-
 $device_register = 'C:\same_2\device_name.txt' # this file contains the device name
 if (-Not (Test-Path $device_register)) {
-    $device_name = (Get-ComputerInfo).CsName
+    $device_name = ""
 }
 else {
     $device_name = Get-Content -Path $device_register -TotalCount 1
@@ -458,3 +445,10 @@ if (-Not (Test-Path $envdir)) {
 
 # //===================== CONFIGURATION =====================//
 # // ========================================================//
+#
+#
+#
+# // ========================================================//
+# //========================= SCRIPT ========================//
+
+hp
