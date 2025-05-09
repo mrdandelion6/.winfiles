@@ -64,17 +64,6 @@ function als {
 $owd = (Get-Location).Path
 $dh = "shaikfai@dh2026pc02.utm.utoronto.ca"
 
-function ccat {
-    # concatenate files and output to the console
-    param (
-        [Parameter(Mandatory=$true)]
-        [string[]]$file
-    )
-
-    Get-Content -Path $file
-
-}
-
 function touch {
     param (
         [Parameter(Mandatory=$true)]
@@ -178,6 +167,9 @@ function sizeof() {
 }
 
 Set-Alias np notepad.exe
+function global:src {
+    . $PROFILE
+}
 
 # ========================== general ==========================
 # =============================================================
@@ -378,6 +370,16 @@ function ubu {
 #
 #
 # =============================================================
+# =========================== vim =============================
+
+Set-PSReadLineOption -EditMode Vi
+
+# =========================== vim =============================
+# =============================================================
+#
+#
+#
+# =============================================================
 # ============================ VMs ============================
 
 function redhat_old {
@@ -450,5 +452,4 @@ if (-Not (Test-Path $envdir)) {
 #
 # // ========================================================//
 # //========================= SCRIPT ========================//
-
 hp
