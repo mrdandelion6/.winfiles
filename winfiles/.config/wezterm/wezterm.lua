@@ -23,7 +23,7 @@ config.colors = {
 }
 
 -- BACKGROUND IMAGE
-local use_background_image = 0 -- toggle this
+local use_background_image = 1 -- toggle this
 local home = os.getenv("USERPROFILE")
 local image_path = home .. "/Pictures/backgrounds/dm.png"
 
