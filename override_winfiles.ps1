@@ -10,17 +10,35 @@ function Test-Ignored {
         [string]$RelPath,
         [string[]]$IgnorePatterns
     )
-    
+    $RelPath = $RelPath.Replace('/', '\')
+
     foreach ($pattern in $IgnorePatterns) {
         # Skip empty lines and comments
         if ([string]::IsNullOrWhiteSpace($pattern) -or $pattern.Trim().StartsWith('#')) {
             continue
         }
         
-        # Check if relative path matches the pattern exactly
-        if ($RelPath -eq $pattern) {
-            Write-Host "Ignoring: $RelPath (matched pattern: $pattern)" -ForegroundColor Yellow
+ 	$trimmedPattern = $pattern.Trim()
+        
+        # Simple exact match for a filename anywhere in the path
+        if ($RelPath -like "*\$trimmedPattern" -or $RelPath -eq $trimmedPattern) {
+            Write-Host "Ignoring: $RelPath (matched ignore pattern: $pattern)" -ForegroundColor Yellow
             return $true
+        }
+        
+        # Match pattern with wildcards
+        if ($RelPath -like $trimmedPattern) {
+            Write-Host "Ignoring: $RelPath (matched wildcard pattern: $pattern)" -ForegroundColor Yellow
+            return $true
+        }
+        
+        # Check each path component individually
+        $pathComponents = $RelPath -split '\\'
+        foreach ($component in $pathComponents) {
+            if ($component -like $trimmedPattern) {
+                Write-Host "Ignoring: $RelPath (component '$component' matched pattern: $pattern)" -ForegroundColor Yellow
+                return $true
+            }
         }
     }
     
