@@ -19,21 +19,21 @@ function Test-Ignored {
         if ([string]::IsNullOrWhiteSpace($pattern) -or $pattern.Trim().StartsWith('#')) {
             continue
         }
-        
+
         $trimmedPattern = $pattern.Trim()
-        
+
         # Simple exact match for a filename anywhere in the path
         if ($RelPath -like "*\$trimmedPattern" -or $RelPath -eq $trimmedPattern) {
             Write-Host "Ignoring: $RelPath (matched ignore pattern: $pattern)" -ForegroundColor Yellow
             return $true
         }
-        
+
         # Match pattern with wildcards
         if ($RelPath -like $trimmedPattern) {
             Write-Host "Ignoring: $RelPath (matched wildcard pattern: $pattern)" -ForegroundColor Yellow
             return $true
         }
-        
+
         # Check each path component individually
         $pathComponents = $RelPath -split '\\'
         foreach ($component in $pathComponents) {
@@ -43,7 +43,7 @@ function Test-Ignored {
             }
         }
     }
-    
+
     return $false
 }
 
@@ -81,33 +81,33 @@ $winfiles = Get-ChildItem -Path $dotfilesRoot -Recurse -File -ErrorAction Silent
 foreach ($winfile in $winfiles) {
     # Get the relative path from winfiles root
     $relPath = $winfile.FullName.Substring($dotfilesRoot.Length + 1)
-    
+
     # Check if relPath is in the ignore list
     if (Test-Ignored -RelPath $relPath -IgnorePatterns $ignorePatterns) {
         continue
     }
-    
+
     # Determine target path in home directory
     $targetPath = Join-Path $HOME $relPath
-    
+
     # If the file exists and is not a symlink, back it up
     if (Test-Path $targetPath) {
         $item = Get-Item $targetPath -Force
-        
+
         # Skip if it's already a symlink (likely from a previous install)
         if ($item.LinkType -eq "SymbolicLink") {
             Write-Host "Skipping already symlinked file: $targetPath" -ForegroundColor Gray
             continue
         }
-        
+
         # Create the directory structure in the backup
         $backupFilePath = Join-Path $backupDir $relPath
         $backupFileDir = Split-Path -Parent $backupFilePath
-        
+
         if (-not (Test-Path $backupFileDir)) {
             New-Item -Path $backupFileDir -ItemType Directory -Force | Out-Null
         }
-        
+
         # Copy the file to backup
         try {
             Copy-Item -Path $targetPath -Destination $backupFilePath -Force
