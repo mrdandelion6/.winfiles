@@ -85,6 +85,14 @@ config.launch_menu = {
         label = "CMD",
         args = { "cmd.exe" },
     },
+    {
+        label = "UCRT64",
+        args = {"C:/msys64/msys2_shell.cmd", "-ucrt64", "-no-start", "-defterm"}
+    },
+    {
+        label = "GitBash",
+        args = { home .. "/AppData/Local/Programs/Git/bin/bash.exe", "-i", "-l" },
+    }
 }
 config.default_prog = { "powershell.exe" }
 
