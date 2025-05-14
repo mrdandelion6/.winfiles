@@ -190,6 +190,9 @@ function bash_pull {
 # =============================================================
 # ============================ git ============================
 
+function bash {
+    & ~\AppData\Local\Programs\Git\bin\bash.exe -i -l
+}
 function Push-AllRemotes {
     git remote | ForEach-Object { git push $_ master }
 }
