@@ -6,6 +6,11 @@
 # =============================================================
 # ========================== general ==========================
 
+function tst {
+    # used to test if changes to script are in effect... run tst at bottom
+    echo "testing script"
+}
+
 function als {
     Write-Host "General:" -ForegroundColor Green
     Write-Output @"
@@ -39,7 +44,7 @@ function als {
     javar -c : run a Java class <c> from parent directory
 "@
 
-    Write-Host "Latex:" -ForegroundColor Cyan  
+    Write-Host "Latex:" -ForegroundColor Cyan
     Write-Output @"
     getmeta : open meta.tex file in VS Code
 "@
@@ -88,14 +93,14 @@ function hp {
     # before i had Write-Host(">") and return " " but that would make the prompt look like ">(env)  " instead of "> (env) ".
 }
 
-function spp { # sp alias is taken 
+function spp { # sp alias is taken
     function global:prompt {
         "$(if (Test-Path variable:/PSDebugContext) { '[DBG]: ' } else { '' })$(Get-Location)> "
     }
 }
 
 
-function shortcut_path { 
+function shortcut_path {
     # return the path a shortcut (.lnk) file points to
     param (
         [Parameter(Mandatory=$true)]
@@ -168,6 +173,30 @@ function sizeof() {
 
 Set-Alias np notepad.exe
 
+Remove-Item Alias:mv -Force
+function mv {
+    param(
+        [Parameter(ValueFromRemainingArguments = $true)]
+        [string[]]$Arguments
+    )
+
+    echo "using custom mv"
+
+    if ($Arguments.Count -lt 2) {
+        Write-Error "usage: mv <source1> [source2] ... <destination>"
+        return
+    }
+
+  # all but last are sources
+    $destination = $Arguments[-1]
+    $sources = $Arguments[0..($Arguments.Count - 2)]
+
+    # Move each source to destination
+    foreach ($source in $sources) {
+        Move-Item $source $destination
+    }
+}
+
 # ========================== general ==========================
 # =============================================================
 #
@@ -211,7 +240,7 @@ Set-Alias pullall Pull-AllRemotes
 # =============================================================
 # ========================== python ===========================
 
-function ppath { 
+function ppath {
     # returns the path to the python executable of the specified version
     param(
         [Parameter(Mandatory=$true)]
@@ -220,7 +249,7 @@ function ppath {
     return "${HOME}\.pyenv\pyenv-win\versions\$v\python.exe"
 }
 
-function actenv { 
+function actenv {
     # activate the specified virtual environment
     param(
         [Parameter(Mandatory=$true)]
@@ -236,7 +265,7 @@ function actenv {
     }
 }
 
-function makenv { 
+function makenv {
     # creates a virtual environment with the specified python version
     param(
         [Parameter(Mandatory=$false)]
@@ -307,7 +336,7 @@ function inenv {
 # =============================================================
 # =========================== conda ===========================
 
-Set-Alias -Name condarev -Value "conda init --reverse" 
+Set-Alias -Name condarev -Value "conda init --reverse"
 
 # =========================== conda ===========================
 # =============================================================
@@ -383,6 +412,35 @@ Set-Alias vi vim
 # =============================================================
 # ========================== nvim =============================
 
+# TODO: fix Notify-Nvim
+#
+# function Notify-Nvim {
+#     $pwd = Get-Location
+#     Write-Host "`e]51;$pwd`a" -NoNewline
+# }
+#
+# function Set-LocationWithNotify {
+#     param(
+#         [Parameter(ValueFromRemainingArguments = $true)]
+#         [string[]]$Path
+#     )
+#
+#     # call the original set-location cmdlet
+#     if ($Path) {
+#         Set-Location @Path
+#     } else {
+#         Set-Location
+#     }
+#
+#     # check if we're inside neovim and send osc sequence
+#     if ($env:NVIM) {
+#         Notify-Nvim
+#     }
+# }
+#
+# create an alias to override the default 'cd' behavior
+# Set-Alias -Name cd -Value Set-LocationWithNotify -Force
+
 # ========================== nvim =============================
 # =============================================================
 #
@@ -445,7 +503,7 @@ switch ($device_name) {
     "FS-LAPTOP" { $envdir = 'C:\.envs'
                   $fall_courses = "C:\735\university\uoft\year-3\fall"
                 }
-    default { 
+    default {
         $envdir = $default_envdir
     }
 }
