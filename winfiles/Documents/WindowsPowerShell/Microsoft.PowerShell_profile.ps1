@@ -6,11 +6,6 @@
 # =============================================================
 # ========================== general ==========================
 
-function tst {
-    # used to test if changes to script are in effect... run tst at bottom
-    echo "testing script"
-}
-
 function als {
     Write-Host "General:" -ForegroundColor Green
     Write-Output @"
@@ -69,8 +64,14 @@ function als {
 $owd = (Get-Location).Path
 $dh = "shaikfai@dh2026pc02.utm.utoronto.ca"
 
-function touch {
-    param (
+function tst {
+    # function to test if any changes have been made to profile in the running shell.
+    # call at bottom of script.
+    echo "testing profile..."
+}
+
+function touch { # linux touch
+param (
         [Parameter(Mandatory=$true)]
         [string]$file
     )
@@ -94,6 +95,7 @@ function hp {
 }
 
 function spp { # sp alias is taken
+    # show the full path in prompt
     function global:prompt {
         "$(if (Test-Path variable:/PSDebugContext) { '[DBG]: ' } else { '' })$(Get-Location)> "
     }
@@ -102,7 +104,7 @@ function spp { # sp alias is taken
 
 function shortcut_path {
     # return the path a shortcut (.lnk) file points to
-    param (
+param (
         [Parameter(Mandatory=$true)]
         [string]$shortcutFile
     )
@@ -153,7 +155,7 @@ function shortcut_path {
 
 function sizeof() {
     # returns the size of the file or directory
-    param (
+param (
         [Parameter(Mandatory=$true)]
         [string]$path,
 
@@ -173,27 +175,88 @@ function sizeof() {
 
 Set-Alias np notepad.exe
 
-Remove-Item Alias:mv -Force
-function mv {
-    param(
+Remove-Item Alias:\mv -ErrorAction SilentlyContinue
+function mv { # linux mv (allows multiple sources)
+param(
         [Parameter(ValueFromRemainingArguments = $true)]
         [string[]]$Arguments
     )
-
-    echo "using custom mv"
 
     if ($Arguments.Count -lt 2) {
         Write-Error "usage: mv <source1> [source2] ... <destination>"
         return
     }
 
-  # all but last are sources
+    # all but last are sources
     $destination = $Arguments[-1]
     $sources = $Arguments[0..($Arguments.Count - 2)]
 
-    # Move each source to destination
+    # move each source to destination
     foreach ($source in $sources) {
         Move-Item $source $destination
+    }
+}
+
+Remove-Item Alias:\rm -ErrorAction SilentlyContinue
+function rm { # linux rm (allows -rf flags)
+param(
+        [Parameter(Mandatory=$true, Position=0, ValueFromRemainingArguments=$true)]
+        [string[]]$Path,
+
+        [Alias('r')]
+        [switch]$Recursive,
+
+        [Alias('f')]
+        [switch]$Force,
+
+        [Alias('rf')]
+        [switch]$RecursiveForce
+    )
+
+    if ($RecursiveForce) {
+        $Recursive = $true
+        $Force = $true
+    }
+
+    foreach ($item in $Path) {
+        # skip flag-like arguments that might have been passed
+        if ($item.StartsWith('-')) {
+            continue
+        }
+
+        try {
+            # with -f flag: silently ignore non-existent files (like linux)
+            if (-not (Test-Path $item)) {
+                if (-not $Force) {
+                    Write-Error "rm: cannot remove '$item': No such file or directory"
+                }
+                continue
+            }
+
+            # get item info to determine if it's a directory
+            $itemInfo = Get-Item $item -ErrorAction SilentlyContinue
+
+            if ($itemInfo.PSIsContainer) {
+                # it's a directory
+                if ($Recursive) {
+                    # force removes write-protected files without prompting
+                    Remove-Item $item -Recurse -Force -ErrorAction $(if ($Force) { 'SilentlyContinue' } else { 'Stop' })
+                } else {
+                    if (-not $Force) {
+                        Write-Error "rm: cannot remove '$item': Is a directory (use -r to remove directories)"
+                    }
+                }
+            } else {
+                # it's a file - force handles write-protected files and suppresses prompts
+                Remove-Item $item -Force -ErrorAction $(if ($Force) { 'SilentlyContinue' } else { 'Stop' })
+            }
+        }
+        catch {
+            # with -f flag: suppress error messages (fail silently like linux rm -f)
+            if (-not $Force) {
+                Write-Error "rm: cannot remove '$item': $($_.Exception.Message)"
+            }
+        }
     }
 }
 
@@ -242,7 +305,7 @@ Set-Alias pullall Pull-AllRemotes
 
 function ppath {
     # returns the path to the python executable of the specified version
-    param(
+param(
         [Parameter(Mandatory=$true)]
         [string]$v
     )
@@ -251,7 +314,7 @@ function ppath {
 
 function actenv {
     # activate the specified virtual environment
-    param(
+param(
         [Parameter(Mandatory=$true)]
         [string]$n
     )
@@ -267,7 +330,7 @@ function actenv {
 
 function makenv {
     # creates a virtual environment with the specified python version
-    param(
+param(
         [Parameter(Mandatory=$false)]
         [string]$n = "env",
         [Parameter(Mandatory=$false)]
@@ -347,7 +410,7 @@ Set-Alias -Name condarev -Value "conda init --reverse"
 
 function javar {
     # run a Java class from parent directory
-    param (
+param (
         [Parameter(Mandatory=$true)]
         [string]$className
     )
@@ -412,8 +475,6 @@ Set-Alias vi vim
 # =============================================================
 # ========================== nvim =============================
 
-# TODO: fix Notify-Nvim
-#
 # function Notify-Nvim {
 #     $pwd = Get-Location
 #     Write-Host "`e]51;$pwd`a" -NoNewline
@@ -437,7 +498,7 @@ Set-Alias vi vim
 #         Notify-Nvim
 #     }
 # }
-#
+
 # create an alias to override the default 'cd' behavior
 # Set-Alias -Name cd -Value Set-LocationWithNotify -Force
 
@@ -455,7 +516,7 @@ function redhat_old {
 
 function redscp {
     # requires the source and destination to be in the form "user@host:/path/to/file"
-    param (
+param (
         [Parameter(Mandatory=$true)]
         [string]$source,
         [Parameter(Mandatory=$true)]
@@ -498,18 +559,18 @@ else {
 $default_envdir = Join-Path -Path $HOME -ChildPath ".envs" # by default, we use this directory for virtual environments
 switch ($device_name) {
     "ACER-DK" { $envdir = 'D:\.envs'
-                $fall_courses = "D:\735-D\school\university\uoft\year-3\fall"
-              }
+        $fall_courses = "D:\735-D\school\university\uoft\year-3\fall"
+    }
     "FS-LAPTOP" { $envdir = 'C:\.envs'
-                  $fall_courses = "C:\735\university\uoft\year-3\fall"
-                }
+        $fall_courses = "C:\735\university\uoft\year-3\fall"
+    }
     default {
         $envdir = $default_envdir
     }
 }
 
 if (-Not (Test-Path $envdir)) {
-        Write-Host "WARNING: python env directory not found: $envdir. create it or configure profile.ps1" -ForegroundColor Yellow
+    Write-Host "WARNING: python env directory not found: $envdir. create it or configure profile.ps1" -ForegroundColor Yellow
 }
 
 # //===================== CONFIGURATION =====================//
@@ -519,4 +580,3 @@ if (-Not (Test-Path $envdir)) {
 #
 # // ========================================================//
 # //========================= SCRIPT ========================//
-hp
