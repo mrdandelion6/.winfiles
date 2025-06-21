@@ -28,7 +28,7 @@ function als {
 
     Write-Host "Python:" -ForegroundColor Blue
     Write-Output @"
-    makenv -v : creates a virtual environment with the given python version <v> in $envdir
+    mkenv -v : creates a virtual environment with the given python version <v> in $envdir
     actenv -n : activate the specified virtual environment with name <n>. it must be in $envdir to work
     inenv : check if currently in a virtual environment
     condarev : alias for 'conda init --reverse'
@@ -305,6 +305,7 @@ Set-Alias pullall Pull-AllRemotes
 
 function ppath {
     # returns the path to the python executable of the specified version
+    # assumes you are using .pyenv setup.
 param(
         [Parameter(Mandatory=$true)]
         [string]$v
@@ -328,14 +329,24 @@ param(
     }
 }
 
-function makenv {
-    # creates a virtual environment with the specified python version
+function mkenv {
+    # creates a virtual environment with the specified python version in $envdir
 param(
-        [Parameter(Mandatory=$false)]
-        [string]$n = "env",
+        [Parameter(Mandatory=$true)]
+        [string]$n,
         [Parameter(Mandatory=$false)]
         [string]$v
     )
+
+    # need virtualenv
+    if (!(Get-Command virtualenv -ErrorAction SilentlyContinue)) {
+        Write-Host "need to install virtualenv" -ForegroundColor Red
+        return
+    }
+    if (Test-Path "$envdir\$n") {
+        Write-Host "env $n already exists in $envdir" -ForegroundColor Red
+        return
+    }
 
     $curr_py = (python --version).Substring(7)
 
@@ -345,46 +356,50 @@ param(
             Write-Host "rejected confirm" -ForegroundColor Red
             return
         }
-        $path="none"
+        $interpreter_path="none"
         $v = $curr_py
     } else {
-        $path = ppath -v $v
+        $interpreter_path = ppath -v $v
     }
 
-    $response = Read-Host "make a python env `"$n`" with version $v in pwd (y) ?"
+    $response = Read-Host "make a python env `"$n`" with version $v in $envdir (y) ?"
     if ($response -ne "y") {
         Write-Host "rejected confirm" -ForegroundColor Red
         return
     }
 
     try {
-        if ($path -eq "none") {
+        if ($interpreter_path -eq "none") {
             try {
-                virtualenv $n
+                virtualenv "$envdir\$n"
                 Write-Host "virtual environment `"$n`" created with current python version $curr_py" -ForegroundColor Green
             } catch {
-                Write-Host "error creating virtual environment" -ForegroundColor Red
+                Write-Host "error creating virtual environment: $($_.Exception.Message)" -ForegroundColor Red
                 return
             }
             return
         }
-        if (!(Test-Path $path)) {
+        if (!(Test-Path $interpreter_path)) {
             $response = Read-Host "python version $v not found, install (y) ?"
             if ($response -ne "y") {
                 Write-Host "rejected confirm" -ForegroundColor Red
                 return
             }
+            if (Get-Command pyenv -ErrorAction SilentlyContinue) {
+                Write-Host "need to install pyenv to install interpreters" -ForegroundColor Red
+                return
+            }
             try {
                 pyenv install $v
             } catch {
-                Write-Host "error installing python version $v" -ForegroundColor Red
+                Write-Host "error installing python version ${v}: $($_.Exception.Message)" -ForegroundColor Red
                 return
             }
         }
-        virtualenv -p $path $n
+        virtualenv -p $interpreter_path $n
         Write-Host "virtual environment `"$n`" created with version $v" -ForegroundColor Green
     } catch {
-        Write-Host "error creating virtual environment" -ForegroundColor Red
+        Write-Host "error creating virtual environment: $($_.Exception.Message)" -ForegroundColor Red
     }
 }
 
