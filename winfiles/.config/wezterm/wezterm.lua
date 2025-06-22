@@ -25,7 +25,7 @@ config.colors = {
 -- BACKGROUND IMAGE
 local use_background_image = 1 -- toggle this
 local home = os.getenv("USERPROFILE")
-local image_path = home .. "/Pictures/backgrounds/dm.png"
+local image_path = home .. "/.winfiles/images/dark_mountain.png"
 
 if use_background_image == 1 then
     config.window_background_image = image_path
@@ -104,7 +104,7 @@ config.max_fps = 144
 function fullscreen_toggle(window, pane)
     local overrides = window:get_config_overrides() or {}
     local is_fullscreen = window:get_dimensions().is_full_screen
-    
+
     if is_fullscreen then
         overrides.enable_tab_bar = false
         wezterm.sleep_ms(10)
@@ -114,7 +114,7 @@ function fullscreen_toggle(window, pane)
         overrides.enable_tab_bar = true
 	overrides.window_decorations = "INTEGRATED_BUTTONS|TITLE"
     end
-    
+
     window:set_config_overrides(overrides)
 end
 
