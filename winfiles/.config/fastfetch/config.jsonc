@@ -1,0 +1,196 @@
+// Load with --load-config examples/2.jsonc
+// Note that you must replace the image path to an existing image to display it.
+
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    "logo": {
+        "source": "Windows 7",
+        "padding": {
+            "top": 2
+        },
+        "color" : {
+            "1" : "#94a8b9",
+            "2" : "#94a8b9",
+            "3" : "#94a8b9",
+            "4" : "#94a8b9"
+        }
+    },
+    "display": {
+        "separator": " -> ",
+        "constants": [
+            "──────────────────────────────"
+        ],
+        "color": {
+            "title" : "#94a8b9",
+        },
+        "percent" : {
+            "type" : 1
+        }
+    },
+    "modules": [
+        {
+            "type": "custom",
+            "format": "┌{$1}{$1}┐",
+            "outputColor": "#94a8b9"
+        },
+        {
+            "type": "title",
+            "keyWidth": 10,
+            "color": {
+                "user": "#94a8b9",
+                "at": "#94a8b9",
+                "host": "#94a8b9"
+            }
+        },
+        {
+            "type": "custom",
+            "format": "└{$1}{$1}┘",
+            "outputColor": "#94a8b9"
+        },
+        {
+            "type": "custom",
+            "format": " {##82b3fb}  {##94b2fb}  {##a6b2fc}  {##b8b2fd}  {##cab1fd}  {##dbb1fe}  {##edb0fe}  {##ffb0ff}  {##f8a6ec}  {##f29dd9}     {##eb93c7}  {##e58ab4}  {##de80a1}  {##e88b99}  {##ea9294}  {##ec998e}  {##efa089}  {##f1a784}  {##f3ae7e}  {##f5b579}"
+        },
+        {
+            "type": "custom",
+            "format": "┌{$1}{$1}┐",
+            "outputColor": "#94a8b9"
+        },
+        {
+            "type": "os",
+            "key": "{icon} OS",
+            "keyColor": "#a6b2fc",
+            "outputColor": "#94a8b9"
+        },
+        {
+            "type": "kernel",
+            "key": "│ ├",
+            "keyColor": "#a6b2fc",
+            "outputColor": "#94a8b9"
+        },
+        {
+            "type": "packages",
+            "key": "│ ├󰏖",
+            "keyColor": "#a6b2fc",
+            "outputColor": "#94a8b9"
+        },
+        {
+            "type": "shell",
+            "key": "│ └",
+            "keyColor": "#a6b2fc",
+            "outputColor": "#94a8b9"
+        },
+        {
+            "type": "wm",
+            "key": " DE/WM",
+            "keyColor": "#ffb0ff",
+            "outputColor": "#94a8b9"
+        },
+        {
+            "type": "lm",
+            "key": "│ ├󰧨",
+            "keyColor": "#ffb0ff",
+            "outputColor": "#94a8b9"
+        },
+        {
+            "type": "wmtheme",
+            "key": "│ ├󰉼",
+            "keyColor": "#ffb0ff",
+            "outputColor": "#94a8b9"
+        },
+        {
+            "type": "icons",
+            "key": "│ ├󰀻",
+            "keyColor": "#ffb0ff",
+            "outputColor": "#94a8b9"
+        },
+        {
+            "type": "terminal",
+            "key": "│ ├",
+            "keyColor": "#ffb0ff",
+            "outputColor": "#94a8b9"
+        },
+        {
+            "type": "wallpaper",
+            "key": "│ └󰸉",
+            "keyColor": "#ffb0ff",
+            "outputColor": "#94a8b9"
+        },
+        {
+            "type": "host",
+            "key": "󰌢 PC",
+            "keyColor": "#de80a1",
+            "outputColor": "#94a8b9"
+        },
+        {
+            "type": "cpu",
+            "key": "│ ├󰻠",
+            "keyColor": "#de80a1",
+            "outputColor": "#94a8b9"
+        },
+        {
+            "type": "gpu",
+            "key": "│ ├󰍛",
+            "keyColor": "#de80a1",
+            "outputColor": "#94a8b9"
+        },
+        {
+            "type": "disk",
+            "key": "│ ├",
+            "keyColor": "#de80a1",
+            "outputColor": "#94a8b9"
+        },
+        {
+            "type": "memory",
+            "key": "│ ├󰑭",
+            "keyColor": "#de80a1",
+            "outputColor": "#94a8b9"
+        },
+        {
+            "type": "swap",
+            "key": "│ ├󰓡",
+            "keyColor": "#de80a1",
+            "outputColor": "#94a8b9"
+        },
+        {
+            "type": "uptime",
+            "key": "│ ├󰅐",
+            "keyColor": "#de80a1",
+            "outputColor": "#94a8b9"
+        },
+        {
+            "type": "display",
+            "key": "│ └󰍹",
+            "keyColor": "#de80a1",
+            "outputColor": "#94a8b9"
+        },
+        {
+            "type": "sound",
+            "key": " SND",
+            "keyColor": "#f5b579",
+            "outputColor": "#94a8b9",
+        },
+        {
+            "type": "player",
+            "key": "│ ├󰥠",
+            "keyColor": "#f5b579",
+            "outputColor": "#94a8b9"
+        },
+        {
+            "type": "media",
+            "key": "│ └󰝚",
+            "keyColor": "#f5b579",
+            "outputColor": "#94a8b9"
+        },
+        {
+            "type": "custom",
+            "format": "└{$1}{$1}┘",
+            "outputColor": "#94a8b9"
+        },
+        "break",
+        {
+            "type": "custom",
+            "format": " {##f5b579}  {##f3ae7e}  {##f1a784}  {##efa089}  {##ec998e}  {##ea9294}  {##e88b99}  {##de80a1}  {##e58ab4}  {##eb93c7}     {##f29dd9}  {##f8a6ec}  {##ffb0ff}  {##edb0fe}  {##dbb1fe}  {##cab1fd}  {##b8b2fd}  {##a6b2fc}  {##94b2fb}  {##82b3fb}"
+        }
+    ]
+}

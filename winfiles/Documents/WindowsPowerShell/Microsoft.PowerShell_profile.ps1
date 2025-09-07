@@ -1,5 +1,5 @@
 # VERSION: 1.1.0
-# Copyright (c) 2024 Faisal Shaik
+# Copyright (c) 2025 Faisal Shaik
 # All rights reserved.
 #
 #
@@ -596,3 +596,4 @@ if (-Not (Test-Path $envdir)) {
 # // ========================================================//
 # //========================= SCRIPT ========================//
 hp
+fastfetch
