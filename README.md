@@ -30,3 +30,14 @@ cd ~/.winfiles
 ./override_winfiles.ps1
 ```
 You will be prompted by `gsudo` to give admin access , press OK.
+
+## List of Scoop Packages
+
+Here are some essential scoop packages I use.
+```bash
+# general
+scoop install fastfetch gsudo curl 7zip unzip nodejs
+
+# nvim
+scoop install neovim ripgrep
+```
