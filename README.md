@@ -36,7 +36,7 @@ You will be prompted by `gsudo` to give admin access , press OK.
 Here are some essential scoop packages I use.
 ```bash
 # general
-scoop install fastfetch gsudo curl 7zip unzip nodejs
+scoop install fastfetch gsudo curl 7zip unzip nodejs fzf
 
 # nvim
 scoop install neovim ripgrep

@@ -260,22 +260,67 @@ param(
     }
 }
 
+# cd but if the path is a file , then cd to the parent
+function pcd {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$Path
+    )
+
+    if (-not (Test-Path $Path)) {
+        Write-Error "Path does not exist: $Path"
+        return
+    }
+
+    if (Test-Path $Path -PathType Container) {
+        cd $Path
+    } else {
+        cd (Split-Path $Path -Parent)
+    }
+}
+
+# start but open explorer even if the path is a file
+function exp {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$Path
+    )
+
+    if (-not (Test-Path $Path)) {
+        start "Path does not exist: $Path"
+        return
+    }
+
+    if (Test-Path $Path -PathType Container) {
+        start $Path
+    } else {
+        Start-Process (Split-Path $Path -Parent)
+    }
+}
+
+
 # ========================== general ==========================
 # =============================================================
 #
 #
 # =============================================================
-# ========================== profile ==========================
-
-function bash_ref {
-    . $PROFILE
+# ========================== fzf ==========================
+function fcd {
+    $dir = Get-ChildItem -Directory -Recurse | fzf | ForEach-Object { $_.FullName }
+    if ($dir) { Set-Location $dir }
 }
 
-function bash_pull {
-    code $PROFILE
+function fex {
+    $item = Get-ChildItem -Recurse | fzf | ForEach-Object { $_.FullName }
+    if ($item) {
+        if (Test-Path $item -PathType Container) {
+            explorer $item
+        } else {
+            explorer (Split-Path $item)
+        }
+    }
 }
-
-# ========================== profile ==========================
+# ========================== fzf ==========================
 # =============================================================
 #
 #
