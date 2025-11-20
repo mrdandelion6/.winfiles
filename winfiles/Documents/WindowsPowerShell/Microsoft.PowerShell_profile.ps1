@@ -86,11 +86,16 @@ param (
 function hp {
     clear
     function global:prompt {
+        # call zoxide hook first
+        if (Get-Command __zoxide_hook -ErrorAction SilentlyContinue) {
+            $null = __zoxide_hook
+        }
+
         Write-Host ("> ") `
         -ForegroundColor Cyan -NoNewline
         return " `b" # returns an empty string and preventts defaulting to 'PS> ' (would happen if  we just returned "")
     }
-    # note the reasosn i want to return an empty string is because of how virtual environments affect the prompt when activated.
+    # note the reason i want to return an empty string is because of how virtual environments affect the prompt when activated.
     # before i had Write-Host(">") and return " " but that would make the prompt look like ">(env)  " instead of "> (env) ".
 }
 
@@ -262,7 +267,7 @@ param(
 
 # cd but if the path is a file , then cd to the parent
 function pcd {
-    param(
+param(
         [Parameter(Mandatory=$true)]
         [string]$Path
     )
@@ -281,7 +286,7 @@ function pcd {
 
 # start but open explorer even if the path is a file
 function exp {
-    param(
+param(
         [Parameter(Mandatory=$true)]
         [string]$Path
     )
