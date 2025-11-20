@@ -304,23 +304,12 @@ function exp {
 #
 #
 # =============================================================
-# ========================== fzf ==========================
-function fcd {
-    $dir = Get-ChildItem -Directory -Recurse | fzf | ForEach-Object { $_.FullName }
-    if ($dir) { Set-Location $dir }
-}
+# ========================== utility ==========================
 
-function fex {
-    $item = Get-ChildItem -Recurse | fzf | ForEach-Object { $_.FullName }
-    if ($item) {
-        if (Test-Path $item -PathType Container) {
-            explorer $item
-        } else {
-            explorer (Split-Path $item)
-        }
-    }
-}
-# ========================== fzf ==========================
+# zoxide
+Invoke-Expression (& { (zoxide init powershell --cmd e | Out-String) })
+
+# ========================== utility ==========================
 # =============================================================
 #
 #
